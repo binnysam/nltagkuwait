@@ -43,7 +43,7 @@ export default function TestimonyCard({
       <CardFooter className="flex gap-2.5">
         {/* Shadcn Button with custom class for primary style */}
         <Button variant="outline" className="rounded-full" asChild>
-          <a href="/service-timing">Read more</a>
+          <a href="/testimonies">Read more</a>
         </Button>
         <Button variant="outline" className="rounded-full" asChild>
           <a href={`${videoUrl}`} target="_blank" rel="noopener noreferrer">

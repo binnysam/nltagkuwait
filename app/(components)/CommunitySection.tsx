@@ -27,7 +27,7 @@ export function CommunitySection() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <IconBrandYoutubeFilled className="mr-2 w-5 h-5" />
+                <IconBrandYoutubeFilled className="mr-0 w-5 h-5" />
                 Explore Channel
               </a>
             </Button>

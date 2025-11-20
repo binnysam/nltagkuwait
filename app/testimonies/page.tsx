@@ -1,34 +1,66 @@
-import TestimonyCard from "../(components)/TestimonyCard";
+// /app/about/page.tsx
 
-export default function TestimonyPage() {
+import { SITE } from "../data/content";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const title = `About — ${SITE.name}`;
+  const description = `Learn about the mission, vision, and story of ${SITE.name} since 2005.`;
+  const pageUrl = `${SITE.domain}/about`;
+
+  return {
+    title: title,
+    description: description,
+
+    // This is used by Facebook & WhatsApp
+    openGraph: {
+      title: title,
+      description: description,
+      url: pageUrl,
+    },
+
+    alternates: {
+      canonical: pageUrl,
+    },
+  };
+}
+
+export default function Testimony() {
   return (
-    <div className="mx-auto px-6 md:px-8 lg:px-12 py-12">
-      <div className="flex gap-6 overflow-x-auto whitespace-nowrap pb-4 -mx-6 px-6 md:-mx-8 md:px-8 lg:mx-0 lg:px-0 lg:overflow-x-hidden lg:justify-center lg:whitespace-normal">
-        <div className="flex shrink-0 justify-center items-center mt-8 whitespace-normal">
-          <TestimonyCard
-            imageUrl="/images/nltag_testimony.jpg"
-            videoUrl="https://www.youtube.com/watch?v=tweDI2t-R4Q&t=143s"
-            title="Testimony Sis. Chellachy Part 01"
-            description="In the year of 2017 I was compelled by the spirit of God to share my testimony to the world to show His grace."
-          />
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Header Section */}
+      <section className="py-10 md:py-24">
+        <div className="text-left">
+          <h1 className="large-title">Testimony by Sis. Chellachy </h1>
+          <p className="mt-4 callout">
+            Praise be to God! Three times, while lying on the edge of death, the
+            Lord compelled me to rise and share my testimony with the world. I
+            prayed and asked God, “How can I share it, Lord?”
+          </p>
+          <p className="mt-4 callout">
+            Where there is unity and love, there will be no lack, for God
+            Himself moves in that place. His wonders unfold when His people
+            stand together in faith. With the prayerful support of my children
+            and our church family, I began sharing my living testimony a story
+            of God’s power, healing, and faithfulness.
+          </p>
+          <p className="mt-4 callout">
+            My heart’s desire is that everyone who listens to these testimonies
+            will be strengthened to live boldly for the name of Christ, never
+            ashamed of the Gospel. The purpose of this series is not only to
+            tell my story but to lead many to salvation, for the coming of our
+            Lord is near.
+          </p>
+          <p className="mt-4 callout">
+            As Scripture says: “Do not be ashamed of the testimony about our
+            Lord.” 2 Timothy 1:8
+          </p>
+          <p className="mt-4 callout">
+            ✨ Watch the Founder’s Testimony Series, be inspired to walk in
+            unity, love, and unwavering faith.
+          </p>
         </div>
-        <div className="flex shrink-0 justify-center items-center mt-8 whitespace-normal">
-          <TestimonyCard
-            imageUrl="/images/nltag_testimony.jpg"
-            videoUrl="https://www.youtube.com/watch?v=qcEqHrgtFJU"
-            title="Testimony Sis. Chellachy Part 02"
-            description="In the year of 2017 I was compelled by the spirit of God to share my testimony to the world to show His grace."
-          />
-        </div>
-        <div className="flex shrink-0 justify-center items-center mt-8 whitespace-normal">
-          <TestimonyCard
-            imageUrl="/images/nltag_testimony.jpg"
-            videoUrl="https://www.youtube.com/watch?v=ZEo8tdz-Eos&t=54s"
-            title="Testimony Sis. Chellachy Part 03"
-            description="In the year of 2017 I was compelled by the spirit of God to share my testimony to the world to show His grace."
-          />
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
