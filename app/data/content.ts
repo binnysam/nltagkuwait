@@ -1,6 +1,7 @@
 export const SITE = {
   name: "New Life Tamil AG Church",
   domain: "https://nltagkuwait.com",
+  baseUrl: "https://nltagkuwait.com",
   identity: "NLTAG",
   description:
     "New Life Tamil AG Church — Pentecostal Tamil church in Kuwait. Join us for worship, testimonies, and community.",
