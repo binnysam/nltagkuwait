@@ -59,7 +59,7 @@ export default function Home() {
     "@type": "Church",
     name: SITE.name,
     url: SITE.domain,
-    logo: `${SITE.domain}/logo.png`, // Update with your actual logo path
+    logo: `${SITE.domain}./images/logo_dark.svg`, // Update with your actual logo path
     image: `${SITE.domain}/hero-image.jpg`, // Update with a real image path
     description: "A Spirit-filled Tamil Pentecostal Church in Kuwait.",
     address: {
