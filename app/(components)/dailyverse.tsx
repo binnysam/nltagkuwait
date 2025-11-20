@@ -34,8 +34,8 @@ export default function DailyVerse() {
   if (err) return <div style={{ color: "red" }}>Error: {err}</div>;
   return (
     <div>
-      <h3 className="mb-4 headline">📖 Daily Verse</h3>
-      <p style={{ whiteSpace: "pre-wrap" }}>{verse}</p>
+      <h1 className="mb-4 headline">📖 Daily Verse</h1>
+      <h2 style={{ whiteSpace: "pre-wrap" }}>{verse}</h2>
     </div>
   );
 }
