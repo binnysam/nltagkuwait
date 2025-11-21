@@ -4,87 +4,83 @@ import * as cheerio from "cheerio";
 export async function GET() {
   const url = "https://www.tamil-bible.com/";
 
+  // DEFINING THE BACKUP VERSE
+  const fallbackVerse =
+    "உன் தேவனாகிய கர்த்தர் உன்னோடே இருக்கிறார்; அவர் வல்லமையுள்ளவர், அவர் இரட்சிப்பார். (செப்பனியா 3:17)";
+
   try {
     const res = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; Next.js scraper)",
-        Accept: "text/html,application/xhtml+xml",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       },
-      // Use Next.js revalidation for caching instead of AbortController
-      next: { revalidate: 60 }, // Re-fetch data every 60 seconds
+      next: { revalidate: 0 }, // currently 0 for testing, change to 60 later
     });
 
     if (!res.ok) {
-      return new Response(JSON.stringify({ ok: false, status: res.status }), {
-        status: 502,
-        headers: { "Content-Type": "application/json" },
-      });
+      // If the server is down, throw error to jump to the catch block
+      throw new Error(`Site returned status ${res.status}`);
     }
 
-    const html = await res.text();
+    const buffer = await res.arrayBuffer();
+    const decoder = new TextDecoder("utf-8");
+    const html = decoder.decode(buffer);
     const $ = cheerio.load(html);
 
     let verseText = "";
 
-    // --- NEW ROBUST SELECTORS ---
+    // 1. Find the Header
+    const headerEl = $("*:contains('இன்றைய வசனம்')").last();
 
-    // Strategy 1: Find the heading <b> and get the next <font> tag's text
-    // This is precise. Structure: <b>Heading</b><font>Verse</font>
-    const heading = $("#mr-right-pane b:contains('இன்றைய வசனம்.')");
-    if (heading.length) {
-      verseText = heading.next("font").text().trim();
+    if (headerEl.length) {
+      // 2. Extract Parent Text
+      let fullText = headerEl.parent().text();
+
+      // If parent is too small, grab the whole row
+      if (fullText.length < 20) {
+        fullText = headerEl.closest("tr").text();
+      }
+
+      // 3. Split and Clean
+      if (fullText.includes("இன்றைய வசனம்")) {
+        const parts = fullText.split("இன்றைய வசனம்");
+        verseText = parts[1];
+      }
     }
 
-    // Strategy 2: Try finding a font tag that's a direct child of center
-    if (!verseText) {
-      verseText = $("#mr-right-pane table font center > font").text().trim();
-    }
-
-    // Strategy 3: Use your original selector as a fallback
-    if (!verseText) {
-      verseText = $("#mr-right-pane table font center font").text().trim();
-    }
-
-    // Strategy 4: Clean up the text if it grabbed too much
-    // (e.g., if it got the heading and the verse in one go)
-    if (verseText.includes("இன்றைய வசனம்.")) {
+    // Cleanup Logic
+    if (verseText) {
       verseText = verseText
-        .split("இன்றைய வசனம்.")[1] // Get text *after* the heading
-        .split("இன்றைய வேதவாசிப்பு பகுதி.")[0] // Get text *before* the next section
+        .replace(/இன்றைய வேதவாசிப்பு.*/s, "")
+        .replace(/Read More.*/gi, "")
+        .replace(/[|&;$%@"<>()+,]/g, "")
+        .replace(/\s{2,}/g, " ")
         .trim();
     }
 
-    // --- END OF NEW SELECTORS ---
-
-    // Final cleanup of any remaining whitespace
-    verseText = verseText.replace(/\s{2,}/g, " ").trim();
-
-    if (!verseText) {
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          message: "No match found. Selectors may be broken.",
-        }),
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+    // --- SAFETY NET 1: EMPTY RESULT ---
+    // If scraping logic didn't find text, use fallback
+    if (!verseText || verseText.length < 5) {
+      console.error("Scraping returned empty. Using fallback verse.");
+      return new Response(JSON.stringify({ ok: true, verse: fallbackVerse }), {
+        status: 200,
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+      });
     }
 
-    // Return the successful response
+    // SUCCESS
     return new Response(JSON.stringify({ ok: true, verse: verseText }), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        // Let Next.js handle caching via the fetch `revalidate` option
-      },
+      headers: { "Content-Type": "application/json; charset=utf-8" },
     });
   } catch (err) {
-    console.error("Scrape error:", err);
-    return new Response(JSON.stringify({ ok: false, error: String(err) }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
+    // --- SAFETY NET 2: CRASH/NETWORK ERROR ---
+    console.error("Scraper error:", err);
+
+    // Return the fallback verse instead of a 500 Error
+    return new Response(JSON.stringify({ ok: true, verse: fallbackVerse }), {
+      status: 200,
+      headers: { "Content-Type": "application/json; charset=utf-8" },
     });
   }
 }
