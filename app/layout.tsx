@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "New Life Tamil AG Church",
   description: "Pentecostal Tamil church in Kuwait",
   verification: {
-    google: "googlec4750548466df1fb",
+    google: "ptpAEpSVeK--Tque05wMvH1DtXBEbp9agNtgOhlpONc",
   },
 };
 
